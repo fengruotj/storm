@@ -17,11 +17,11 @@
  */
 package org.apache.storm.tuple;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.storm.generated.GlobalStreamId;
 import org.apache.storm.task.GeneralTopologyContext;
+
+import java.util.Collections;
+import java.util.List;
 
 public class TupleImpl implements Tuple {
     private final List<Object> values;
@@ -32,7 +32,14 @@ public class TupleImpl implements Tuple {
     private Long _processSampleStartTime;
     private Long _executeSampleStartTime;
     private long _outAckVal = 0;
-    
+
+    public long startSerializingTime=0;
+    public long endSerializingTime=0;
+    public long startDeserializingTime=0;
+    public long endDeserializingTime=0;
+
+    public long communicationTime=0;
+
     public TupleImpl(Tuple t) {
         this.values = t.getValues();
         this.taskId = t.getSourceTask();
@@ -257,7 +264,36 @@ public class TupleImpl implements Tuple {
     public GeneralTopologyContext getContext() {
         return context;
     }
-    
+
+    @Override
+    public long getStartSerializingTime() {
+        return startSerializingTime;
+    }
+
+    @Override
+    public long getEndSerializingTime() {
+        return endSerializingTime;
+    }
+
+    @Override
+    public long getStartDeserializingTime() {
+        return startDeserializingTime;
+    }
+
+    @Override
+    public long getEndDeserializingTime() {
+        return endDeserializingTime;
+    }
+
+    @Override
+    public long getCommunicationTime() {
+        return communicationTime;
+    }
+
+    public void setCommunicationTime(long communicationTime) {
+        this.communicationTime = communicationTime;
+    }
+
     @Override
     public String toString() {
         return "source: " + getSourceComponent() + ":" + taskId + ", stream: " + streamId + ", id: "+ id.toString() + ", " + values.toString() + " PROC_START_TIME(sampled): " + _processSampleStartTime + " EXEC_START_TIME(sampled): " + _executeSampleStartTime;

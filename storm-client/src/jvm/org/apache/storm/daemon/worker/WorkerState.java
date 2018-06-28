@@ -38,6 +38,7 @@ import org.apache.storm.serialization.KryoTupleSerializer;
 import org.apache.storm.task.WorkerTopologyContext;
 import org.apache.storm.tuple.AddressedTuple;
 import org.apache.storm.tuple.Fields;
+import org.apache.storm.tuple.TupleImpl;
 import org.apache.storm.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -536,8 +537,12 @@ public class WorkerState {
                 if (! remoteMap.containsKey(destTask)) {
                     remoteMap.put(destTask, new ArrayList<>());
                 }
+                TupleImpl tuple=(TupleImpl)addressedTuple.getTuple();
+                tuple.startSerializingTime=System.currentTimeMillis();
                 byte[] serialize = serializer.serialize(addressedTuple.getTuple());
-                remoteMap.get(destTask).add(new TaskMessage(destTask,serialize ));
+                tuple.endSerializingTime=System.currentTimeMillis();
+                byte[] serialize2 = serializer.serialize(tuple);
+                remoteMap.get(destTask).add(new TaskMessage(destTask,serialize2));
             }
         }
 

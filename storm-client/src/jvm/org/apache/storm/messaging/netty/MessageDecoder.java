@@ -17,14 +17,14 @@
  */
 package org.apache.storm.messaging.netty;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.storm.messaging.TaskMessage;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MessageDecoder extends FrameDecoder {    
     /*
@@ -102,11 +102,14 @@ public class MessageDecoder extends FrameDecoder {
             // case 3: task Message
 
             // Make sure that we have received at least an integer (length)
-            if (available < 4) {
+            if (available < 12) {
                 // need more data
                 buf.resetReaderIndex();
                 break;
             }
+
+            available -= 8;
+            long startTimeMills = buf.readLong();
 
             // Read the length field.
             int length = buf.readInt();
@@ -124,6 +127,7 @@ public class MessageDecoder extends FrameDecoder {
                 buf.resetReaderIndex();
                 break;
             }
+
             available -= length;
 
             // There's enough bytes in the buffer. Read it.
@@ -132,7 +136,7 @@ public class MessageDecoder extends FrameDecoder {
 
             // Successfully decoded a frame.
             // Return a TaskMessage object
-            ret.add(new TaskMessage(code, payload.array()));
+            ret.add(new TaskMessage(code, startTimeMills ,payload.array()));
         }
 
         if (ret.size() == 0) {

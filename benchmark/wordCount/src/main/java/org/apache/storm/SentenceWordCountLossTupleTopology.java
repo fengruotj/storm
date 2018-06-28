@@ -10,7 +10,7 @@ import org.apache.storm.utils.Utils;
 /**
  * Created by 79875 on 2017/3/7.
  * 提交stormtopology任务
- * storm jar wordCount-2.0.0-SNAPSHOT.jar org.apache.storm.SentenceWordCountLossTupleTopology stormwordcount 2 1 1 10
+ * storm jar wordCount-2.0.0-SNAPSHOT.jar org.apache.storm.SentenceWordCountLossTupleTopology stormwordcount 7 1 1 0
  */
 public class SentenceWordCountLossTupleTopology {
 

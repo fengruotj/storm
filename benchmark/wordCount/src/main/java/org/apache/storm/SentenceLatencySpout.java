@@ -7,6 +7,8 @@ import org.apache.storm.topology.base.BaseRichSpout;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Values;
 import org.apache.storm.util.TimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.UUID;
@@ -18,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Storm丢失Tuple数量的Benchmark Spout
  */
 public class SentenceLatencySpout extends BaseRichSpout {
+    private static Logger logger= LoggerFactory.getLogger(SentenceLatencySpout.class);
+
     private static final String TUPLECOUNT_STREAM_ID="tuplecountstream";
     private static final String WORDCOUNT_STREAM_ID="wordcountstream";
 
@@ -43,7 +47,8 @@ public class SentenceLatencySpout extends BaseRichSpout {
     public void nextTuple() {
         String word=randomWords(5);
         //Storm 的消息ack机制
-        Values value = new Values(word,System.currentTimeMillis());
+        Long startTime=System.currentTimeMillis();
+        Values value = new Values(word,startTime);
         UUID uuid=UUID.randomUUID();
         pending.put(uuid,value);
         outputCollector.emit(WORDCOUNT_STREAM_ID,value,uuid);
@@ -62,7 +67,7 @@ public class SentenceLatencySpout extends BaseRichSpout {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declareStream(WORDCOUNT_STREAM_ID,new Fields("word","startTimeMills"));
+        outputFieldsDeclarer.declareStream(WORDCOUNT_STREAM_ID,new Fields("word","startTime"));
     }
 
     /**

@@ -17,23 +17,11 @@
  */
 package org.apache.storm.messaging.netty;
 
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.lang.InterruptedException;
-
 import org.apache.storm.Config;
 import org.apache.storm.grouping.Load;
 import org.apache.storm.messaging.ConnectionWithStatus;
-import org.apache.storm.messaging.TaskMessage;
 import org.apache.storm.messaging.IConnectionCallback;
+import org.apache.storm.messaging.TaskMessage;
 import org.apache.storm.metric.api.IStatefulObject;
 import org.apache.storm.utils.ObjectReader;
 import org.apache.storm.utils.StormBoundedExponentialBackoffRetry;
@@ -48,11 +36,14 @@ import org.jboss.netty.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import java.util.ArrayList;
-import java.util.List;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -306,6 +297,7 @@ public class Client extends ConnectionWithStatus implements IStatefulObject, ISa
         synchronized (writeLock) {
             while (msgs.hasNext()) {
                 TaskMessage message = msgs.next();
+                message.setStartTimeMills(System.currentTimeMillis());
                 MessageBatch full = batcher.add(message);
                 if(full != null){
                     flushMessages(channel, full);

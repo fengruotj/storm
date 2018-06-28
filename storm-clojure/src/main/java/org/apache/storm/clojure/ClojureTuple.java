@@ -17,33 +17,11 @@
  */
 package org.apache.storm.clojure;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import clojure.lang.*;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.TupleImpl;
 
-import clojure.lang.AFn;
-import clojure.lang.ASeq;
-import clojure.lang.ArityException;
-import clojure.lang.Counted;
-import clojure.lang.IFn;
-import clojure.lang.ILookup;
-import clojure.lang.IMapEntry;
-import clojure.lang.IMeta;
-import clojure.lang.IPersistentCollection;
-import clojure.lang.IPersistentMap;
-import clojure.lang.ISeq;
-import clojure.lang.Indexed;
-import clojure.lang.Keyword;
-import clojure.lang.MapEntry;
-import clojure.lang.Obj;
-import clojure.lang.PersistentArrayMap;
-import clojure.lang.Seqable;
-import clojure.lang.Symbol;
+import java.util.*;
 
 public class ClojureTuple extends TupleImpl implements Seqable, Indexed, IMeta, ILookup, IPersistentMap, Map, IFn {
     private IPersistentMap _meta;
@@ -102,6 +80,26 @@ public class ClojureTuple extends TupleImpl implements Seqable, Indexed, IMeta, 
             return new Seq(getFields().toList(), getValues(), 0);
         }
         return null;
+    }
+
+    @Override
+    public long getStartSerializingTime() {
+        return 0;
+    }
+
+    @Override
+    public long getEndSerializingTime() {
+        return 0;
+    }
+
+    @Override
+    public long getStartDeserializingTime() {
+        return 0;
+    }
+
+    @Override
+    public long getEndDeserializingTime() {
+        return 0;
     }
 
     static class Seq extends ASeq implements Counted {

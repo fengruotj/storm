@@ -20,11 +20,18 @@ package org.apache.storm.messaging;
 import java.nio.ByteBuffer;
 
 public class TaskMessage {
+    private long _startTimeMills=0L;
     private int _task;
     private byte[] _message;
     
     public TaskMessage(int task, byte[] message) {
         _task = task;
+        _message = message;
+    }
+
+    public TaskMessage(int task, Long startTimeMills, byte[] message) {
+        _task = task;
+        this._startTimeMills=startTimeMills;
         _message = message;
     }
     
@@ -37,8 +44,9 @@ public class TaskMessage {
     }
     
     public ByteBuffer serialize() {
-        ByteBuffer bb = ByteBuffer.allocate(_message.length+2);
+        ByteBuffer bb = ByteBuffer.allocate(_message.length+2+8);
         bb.putShort((short)_task);
+        bb.putLong(_startTimeMills);
         bb.put(_message);
         return bb;
     }
@@ -46,8 +54,16 @@ public class TaskMessage {
     public void deserialize(ByteBuffer packet) {
         if (packet==null) return;
         _task = packet.getShort();
-        _message = new byte[packet.limit()-2];
+        _startTimeMills=packet.getLong();
+        _message = new byte[packet.limit()-10];
         packet.get(_message);
     }
 
+    public Long getStartTimeMills() {
+        return _startTimeMills;
+    }
+
+    public void setStartTimeMills(Long startTimeMills) {
+        this._startTimeMills = startTimeMills;
+    }
 }

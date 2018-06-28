@@ -47,7 +47,7 @@ class MessageBatch {
     private int msgEncodeLength(TaskMessage taskMsg) {
         if (taskMsg == null) return 0;
 
-        int size = 6; //INT + SHORT
+        int size = 6+8; //INT + SHORT +Long
         if (taskMsg.message() != null) 
             size += taskMsg.message().length;
         return size;
@@ -110,6 +110,7 @@ class MessageBatch {
             throw new RuntimeException("Task ID should not exceed "+Short.MAX_VALUE);
         
         bout.writeShort((short)task_id);
+        bout.writeLong(message.getStartTimeMills());
         bout.writeInt(payload_len);
         if (payload_len >0)
             bout.write(message.message());

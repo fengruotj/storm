@@ -18,7 +18,7 @@ import java.util.Map;
  * Created by mastertj on 2018/6/20.
  */
 public class WordCountLatencyTupleBolt extends BaseRichBolt{
-    private static Logger logger= LoggerFactory.getLogger(WordCountThroughputBolt.class);
+    private static Logger logger= LoggerFactory.getLogger(WordCountLatencyTupleBolt.class);
 
     private Map<String, Long> counts = new HashMap<String, Long>();
 
@@ -41,8 +41,20 @@ public class WordCountLatencyTupleBolt extends BaseRichBolt{
             isperpare=false;
         }
         String word = tuple.getStringByField("word");
-        Long startTimeMills=tuple.getLongByField("startTimeMills");
-        Long communicationTime=System.currentTimeMillis()-startTimeMills;
+        Long startTime=tuple.getLongByField("startTime");
+
+        Long startSerializingTime=tuple.getStartSerializingTime();
+        Long endSerializingTime=tuple.getEndSerializingTime();
+        Long startDeserializingTime=tuple.getStartDeserializingTime();
+        Long endDeserializingTime=tuple.getEndDeserializingTime();
+        long communicationTime = tuple.getCommunicationTime();
+
+        //logger.info(startTime+"\t"+startSerializingTime+"\t"+endSerializingTime+"\t"+startDeserializingTime+"\t"+endDeserializingTime);
+
+        Long sendWaitTime=startDeserializingTime-startTime-communicationTime;
+        Long receiveWaitTime=System.currentTimeMillis()-endDeserializingTime;
+        Long deSerializingTime=endDeserializingTime-startDeserializingTime;
+        Long serializingTime=endSerializingTime-startSerializingTime;
 
         Long beforeTimeNano=System.nanoTime()/1000;
 
@@ -58,12 +70,14 @@ public class WordCountLatencyTupleBolt extends BaseRichBolt{
         outputCollector.ack(tuple);
         Long endTimeNano=System.nanoTime()/1000;
         Long computeTime=endTimeNano-beforeTimeNano;
-        this.outputCollector.emit(LATENCYTIME_STREAM_ID,new Values(taskid,communicationTime,computeTime));
+
+        Long totalTime=System.currentTimeMillis()-startTime;
+        this.outputCollector.emit(LATENCYTIME_STREAM_ID,new Values(taskid,sendWaitTime,receiveWaitTime,computeTime,serializingTime,deSerializingTime,communicationTime,totalTime));
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declareStream(LATENCYTIME_STREAM_ID,new Fields("taskid","communicationTime","computeTime"));
+        declarer.declareStream(LATENCYTIME_STREAM_ID,new Fields("taskid","sendWaitTime","receiveWaitTime","computeTime","serializingTime","deSerializingTime","communicationTime","totalTime"));
     }
 
 
