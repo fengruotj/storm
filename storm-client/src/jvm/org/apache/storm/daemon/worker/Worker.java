@@ -380,7 +380,6 @@ public class Worker implements Shutdownable, DaemonCommon {
             }
 
             @Override public void lowWaterMark() throws Exception {
-
                 LOG.debug("worker {} transfer-queue is not congested, checking backpressure state", workerState.workerId);
                 WorkerBackpressureThread.notifyBackpressureChecker(workerState.backpressureTrigger);
             }
