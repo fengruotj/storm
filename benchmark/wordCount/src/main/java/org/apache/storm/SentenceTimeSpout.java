@@ -19,8 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by mastertj on 2018/6/20.
  * Storm丢失Tuple数量的Benchmark Spout
  */
-public class SentenceLatencySpout extends BaseRichSpout {
-    private static Logger logger= LoggerFactory.getLogger(SentenceLatencySpout.class);
+public class SentenceTimeSpout extends BaseRichSpout {
+    private static Logger logger= LoggerFactory.getLogger(SentenceTimeSpout.class);
 
     private static final String TUPLECOUNT_STREAM_ID="tuplecountstream";
     private static final String WORDCOUNT_STREAM_ID="wordcountstream";
@@ -32,7 +32,7 @@ public class SentenceLatencySpout extends BaseRichSpout {
 
     private long waitTimeNanos;
 
-    public SentenceLatencySpout(long waitTimeNanos) {
+    public SentenceTimeSpout(long waitTimeNanos) {
         this.waitTimeNanos = waitTimeNanos;
     }
 

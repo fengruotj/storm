@@ -72,15 +72,17 @@ public class DeserializingConnectionCallback implements IConnectionCallback, IMe
         KryoTupleDeserializer des = _des.get();
         ArrayList<AddressedTuple> ret = new ArrayList<>(batch.size());
         for (TaskMessage message: batch) {
-            long startTimeMills = message.getStartTimeMills();
+            long clientTimeMills = message.getStartTimeMills();
+            long serverTimeMills = System.currentTimeMillis();
             long startDeserializeTime=System.currentTimeMillis();
             Tuple tuple = des.deserialize(message.message());
             long endDeserializeTime=System.currentTimeMillis();
             TupleImpl tuple1=(TupleImpl)tuple;
             tuple1.startDeserializingTime=startDeserializeTime;
             tuple1.endDeserializingTime=endDeserializeTime;
-            long comunicationTime = System.currentTimeMillis() - startTimeMills;
-            tuple1.setCommunicationTime(comunicationTime);
+            tuple1.setClientTime(clientTimeMills);
+            tuple1.setServerTime(serverTimeMills);
+            tuple1.setCommunicationTime(serverTimeMills-clientTimeMills);
             AddressedTuple addrTuple = new AddressedTuple(message.task(), tuple);
             updateMetrics(tuple.getSourceTask(), message);
             ret.add(addrTuple);

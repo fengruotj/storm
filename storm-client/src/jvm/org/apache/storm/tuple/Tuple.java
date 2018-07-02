@@ -80,5 +80,11 @@ public interface Tuple extends ITuple{
 
     public long getEndDeserializingTime();
 
+    //获取客户端发送时间
+    public long getClientTime();
+
+    //获取服务器端接收时间
+    public long getServerTime();
+
     public long getCommunicationTime();
 }

@@ -38,6 +38,8 @@ public class TupleImpl implements Tuple {
     public long startDeserializingTime=0;
     public long endDeserializingTime=0;
 
+    public long clientTime=0;
+    public long serverTime=0;
     public long communicationTime=0;
 
     public TupleImpl(Tuple t) {
@@ -286,12 +288,30 @@ public class TupleImpl implements Tuple {
     }
 
     @Override
+    public long getClientTime() {
+        return clientTime;
+    }
+
+    @Override
+    public long getServerTime() {
+        return serverTime;
+    }
+
+    @Override
     public long getCommunicationTime() {
         return communicationTime;
     }
 
     public void setCommunicationTime(long communicationTime) {
         this.communicationTime = communicationTime;
+    }
+
+    public void setClientTime(long clientTime) {
+        this.clientTime = clientTime;
+    }
+
+    public void setServerTime(long serverTime) {
+        this.serverTime = serverTime;
     }
 
     @Override

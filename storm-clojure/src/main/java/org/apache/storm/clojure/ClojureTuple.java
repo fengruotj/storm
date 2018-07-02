@@ -102,6 +102,21 @@ public class ClojureTuple extends TupleImpl implements Seqable, Indexed, IMeta, 
         return 0;
     }
 
+    @Override
+    public long getClientTime() {
+        return 0;
+    }
+
+    @Override
+    public long getServerTime() {
+        return 0;
+    }
+
+    @Override
+    public long getCommunicationTime() {
+        return 0;
+    }
+
     static class Seq extends ASeq implements Counted {
         private static final long serialVersionUID = 1L;
         final List<String> fields;
